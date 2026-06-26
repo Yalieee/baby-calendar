@@ -29,7 +29,7 @@ const {
 <template>
   <v-app>
     <v-main class="app-main">
-      <v-container class="app-container" max-width="720">
+      <v-container class="app-container" max-width="960">
         <AppHeader />
 
         <BirthdayOnboardingCard
@@ -43,6 +43,7 @@ const {
 
         <HomeContent
           v-else-if="birthday"
+          :birthday="birthday"
           :age-summary="ageSummary"
           :birthday-display="birthdayDisplay"
           @edit="openEditDialog"

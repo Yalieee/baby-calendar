@@ -113,3 +113,24 @@ export function getAgeSummary(birthday) {
   const monthPart = ageMonths > 0 ? ` ${ageMonths} 個月` : ''
   return `出生 ${ageYears} 歲${monthPart}`
 }
+
+export function getBabyMonthIndex(birthday) {
+  const [year, month, day] = birthday.split('-').map(Number)
+  const birth = new Date(year, month - 1, day)
+  const today = new Date()
+
+  let ageMonths = (today.getFullYear() - birth.getFullYear()) * 12
+  ageMonths += today.getMonth() - birth.getMonth()
+
+  if (today.getDate() < birth.getDate()) {
+    ageMonths -= 1
+  }
+
+  return Math.max(0, Math.min(24, ageMonths))
+}
+
+export function formatMonthLabel(monthId) {
+  if (monthId === 0) return '0-1 個月'
+  if (monthId === 24) return '2 歲'
+  return `${monthId} 個月`
+}
