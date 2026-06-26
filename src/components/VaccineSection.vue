@@ -1,7 +1,9 @@
 <script setup>
 import { useVaccineStatus } from '../composables/useVaccineStatus.js'
 
-defineProps({
+const { isCompleted, markCompleted, unmarkCompleted } = useVaccineStatus()
+
+const props = defineProps({
   monthId: {
     type: Number,
     required: true,
@@ -10,17 +12,36 @@ defineProps({
     type: Array,
     default: () => [],
   },
+  highlighted: {
+    type: Boolean,
+    default: false,
+  },
+  highlightedText: {
+    type: String,
+    default: '',
+  },
 })
-
-const { isCompleted, markCompleted, unmarkCompleted } = useVaccineStatus()
 
 function vaccineKey(vaccine) {
   return `${vaccine.age}|${vaccine.name}`
 }
+
+function vaccineDisplayText(vaccine) {
+  return `${vaccine.name}（${vaccine.age}）`
+}
+
+function isHighlightedVaccine(vaccine) {
+  return props.highlightedText && vaccineDisplayText(vaccine) === props.highlightedText
+}
 </script>
 
 <template>
-  <v-card class="vaccine-section" elevation="0" border>
+  <v-card
+    class="vaccine-section"
+    :class="{ 'vaccine-section--highlighted': highlighted }"
+    elevation="0"
+    border
+  >
     <v-card-item>
       <template #prepend>
         <v-avatar color="teal" variant="tonal" size="40">
@@ -35,7 +56,10 @@ function vaccineKey(vaccine) {
           v-for="vaccine in vaccines"
           :key="vaccineKey(vaccine)"
           class="vaccine-card"
-          :class="{ 'vaccine-card--completed': isCompleted(monthId, vaccine) }"
+          :class="{
+            'vaccine-card--completed': isCompleted(monthId, vaccine),
+            'vaccine-card--highlighted': isHighlightedVaccine(vaccine),
+          }"
           variant="tonal"
           :color="isCompleted(monthId, vaccine) ? 'success' : 'teal'"
         >
@@ -94,6 +118,11 @@ function vaccineKey(vaccine) {
 <style scoped>
 .vaccine-section {
   text-align: left;
+  transition: box-shadow 0.3s ease;
+}
+
+.vaccine-section--highlighted {
+  box-shadow: 0 0 0 2px rgba(var(--v-theme-primary), 0.45);
 }
 
 .vaccine-list {
@@ -108,6 +137,10 @@ function vaccineKey(vaccine) {
 
 .vaccine-card--completed {
   box-shadow: inset 0 0 0 1px rgba(var(--v-theme-success), 0.35);
+}
+
+.vaccine-card--highlighted {
+  box-shadow: 0 0 0 2px rgba(var(--v-theme-primary), 0.45);
 }
 
 .vaccine-card__header {

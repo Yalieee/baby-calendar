@@ -1,7 +1,8 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { getAllMonths, getCommonContent } from '../content/index.js'
 import { formatMonthLabel, getBabyMonthIndex } from '../utils/birthday.js'
+import ContentSearch from './ContentSearch.vue'
 import MonthDetailCard from './MonthDetailCard.vue'
 
 const props = defineProps({
@@ -14,6 +15,11 @@ const props = defineProps({
 const months = getAllMonths()
 const commonContent = getCommonContent()
 const selectedMonthId = ref(getBabyMonthIndex(props.birthday))
+const highlightSection = ref('')
+const highlightText = ref('')
+const monthDetailRef = ref(null)
+const warningAlertRef = ref(null)
+let isSearchNavigation = false
 
 const currentMonthId = computed(() => getBabyMonthIndex(props.birthday))
 const selectedMonth = computed(
@@ -24,11 +30,39 @@ watch(
   () => props.birthday,
   (birthday) => {
     selectedMonthId.value = getBabyMonthIndex(birthday)
+    highlightSection.value = ''
+    highlightText.value = ''
   },
 )
 
+watch(selectedMonthId, () => {
+  if (!isSearchNavigation) {
+    highlightSection.value = ''
+    highlightText.value = ''
+  }
+})
+
 function selectMonth(monthId) {
   selectedMonthId.value = monthId
+}
+
+async function handleSearchSelect(result) {
+  isSearchNavigation = true
+  highlightSection.value = result.section
+  highlightText.value = result.text
+
+  if (result.monthId === null) {
+    await nextTick()
+    warningAlertRef.value?.$el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    isSearchNavigation = false
+    return
+  }
+
+  selectedMonthId.value = result.monthId
+
+  await nextTick()
+  monthDetailRef.value?.$el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  isSearchNavigation = false
 }
 </script>
 
@@ -51,6 +85,8 @@ function selectMonth(monthId) {
         回到目前月份
       </v-btn>
     </div>
+
+    <ContentSearch @select="handleSearchSelect" />
 
     <div class="timeline-track">
       <v-slide-group
@@ -82,12 +118,16 @@ function selectMonth(monthId) {
     </div>
 
     <MonthDetailCard
+      ref="monthDetailRef"
       :month="selectedMonth"
       :is-current="selectedMonth.id === currentMonthId"
+      :highlight-section="highlightSection"
+      :highlight-text="highlightText"
       class="mb-6"
     />
 
     <v-alert
+      ref="warningAlertRef"
       type="warning"
       variant="tonal"
       border="start"
