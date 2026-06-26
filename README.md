@@ -1,5 +1,30 @@
-# Vue 3 + Vite
+# baby-calendar
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+GitHub Pages: https://yalieee.github.io/baby-calendar/
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+這是一個只部署成 static page 的新生兒成長照護筆記專案，用來追蹤不同階段需要注意的事項，並整理照顧新生兒時可能遇到的問題、觀察重點與處理方向。
+
+## 專案目標
+
+- 以靜態頁面呈現新生兒成長與照護資訊，不需要後端服務。
+- 整理各階段注意事項，例如餵食、睡眠、尿布、體溫、發展里程碑與就醫警訊。
+- 收斂常見問題與可能的處理方式，方便照顧者快速查閱。
+- 保持內容清楚、可讀、容易更新，適合作為家庭內部照護參考。
+
+## 靜態網站原則
+
+這個網站預期由 GitHub Pages 提供靜態檔案，不需要後端服務。開發時請避免加入會讓專案依賴伺服器端功能的設計，例如：
+
+- 後端 API、資料庫或伺服器端儲存。
+- 需要登入、帳號系統或伺服器工作排程的功能。
+- 會把使用者資料送到後端服務處理的表單或整合。
+
+內容與互動應盡量在前端完成，並透過 Vite 打包後由 GitHub Pages 靜態提供。
+
+## 開發指令
+
+```sh
+npm install
+npm run dev
+npm run build
+```
